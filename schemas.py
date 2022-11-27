@@ -4,13 +4,14 @@ from pydantic import BaseModel
 
 #kayak ngatur bagaimana cara user melihat anuan kita
 
-class BaseUser(BaseModel):
+class BaseUserData(BaseModel):
 	username:str
 	password:str
 	email:str
+	secretCombination:int
 
 # Used to get all attibutes from user
-class GetUser(BaseUser):
+class GetUser(BaseUserData):
 	id:int
 	date_created:datetime.datetime
 
@@ -21,6 +22,13 @@ class GetUser(BaseUser):
 class ShowUser(BaseModel):
 	username:str
 	email:str
+
+	class Config:
+		orm_mode = True
+
+class Login(BaseModel):
+	username:str
+	password:str
 
 	class Config:
 		orm_mode = True
