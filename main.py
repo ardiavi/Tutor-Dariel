@@ -25,12 +25,16 @@ models.Base.metadata.create_all(bind=engine) #to create database
 app = FastAPI()
 
 @app.post('/user') #(/ itu adalah path  )
-def create_user(user : schemas.BaseUserData, db:Session = Depends(get_db), current_user: schemas.BaseUserData = Depends(oauth2.get_current_user)):
+def create_user(user : schemas.BaseUserData, db:Session = Depends(get_db)):
     new_user = models.User(username=user.username, password=Hash.bcrypt(user.password), email=user.email, secretCombination=user.secretCombination) #manualnya (user.name = username, dst) **user.dict()
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
     return new_user
+
+@app.post('/exclusive') #(/ itu adalah path  )
+def protected_function(current_user: schemas.BaseUserData = Depends(oauth2.get_current_user)):
+    pass
 
 @app.get('/user', response_model=List[schemas.ShowUser])
 def get_allUser(db: Session = Depends(get_db)):

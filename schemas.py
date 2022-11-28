@@ -1,5 +1,5 @@
 import datetime
-
+from typing import Optional
 from pydantic import BaseModel
 
 #kayak ngatur bagaimana cara user melihat anuan kita
@@ -36,3 +36,6 @@ class Login(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
