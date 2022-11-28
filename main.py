@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Depends, status, HTTPException
-
+from fastapi.security import OAuth2PasswordRequestForm
 from database import engine, SessionLocal
 from hashing import Hash
 from sqlalchemy.orm import Session
 from typing import List
-import schemas
+import schemas,authentication, oauth2
 import models
 import tokenz
 from datetime import timedelta
@@ -25,7 +25,7 @@ models.Base.metadata.create_all(bind=engine) #to create database
 app = FastAPI()
 
 @app.post('/user') #(/ itu adalah path  )
-def create_user(user : schemas.BaseUserData, db:Session = Depends(get_db)):
+def create_user(user : schemas.BaseUserData, db:Session = Depends(get_db), current_user: schemas.BaseUserData = Depends(oauth2.get_current_user)):
     new_user = models.User(username=user.username, password=Hash.bcrypt(user.password), email=user.email, secretCombination=user.secretCombination) #manualnya (user.name = username, dst) **user.dict()
     db.add(new_user)
     db.commit()
@@ -38,17 +38,11 @@ def get_allUser(db: Session = Depends(get_db)):
      #ini kyk contoh aja intinya bikin fungsi ada return
 
 @app.post('/login')
-def login(request:schemas.Login, db:Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.username == request.username).first()
-    if not user :
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Invalid Credentials")
-    if not Hash.verify(user.password, request.password):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Invalid Password")
-    access_token_expires = timedelta(minutes=tokenz.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = tokenz.create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
-    )
-    return {"access_token": access_token, "token_type": "bearer"}
+
+def login(db:Session=Depends(get_db), request:OAuth2PasswordRequestForm=Depends()):
+	return authentication.login(request=request, db=db)
+
+
 
 if __name__ == '__main__':
     uvicorn.run('main:app', host='0.0.0.0', port=8000, reload= True)
