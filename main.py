@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, status, HTTPException
+from fastapi import FastAPI, Depends, status, HTTPException,File, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 from database import engine, SessionLocal
 from hashing import Hash
@@ -9,6 +9,8 @@ import models
 import tokenz
 from datetime import timedelta
 
+import numpy as np
+import pandas as pd
 import uvicorn
 #
 
@@ -45,6 +47,18 @@ def get_allUser(db: Session = Depends(get_db)):
 
 def login(db:Session=Depends(get_db), request:OAuth2PasswordRequestForm=Depends()):
 	return authentication.login(request=request, db=db)
+
+#Machine Learning
+
+from .ml.model import get_model, n_features, Model
+
+def predict(input: schemas.PredictRequest, model: Model = Depends(get_model)):
+    X = np.array(input.data)
+    y_pred = model.predict(X)
+    result = schemas.PredictResponse(data=y_pred.tolist())
+
+    return result
+
 
 
 
