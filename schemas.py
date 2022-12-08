@@ -41,6 +41,7 @@ class TokenData(BaseModel):
     username: Optional[str] = None
 
 #Schemas For Machine Learning
+"""
 from .ml.model import n_features
 class PredictRequest(BaseModel):
     data: List[List[float]]
@@ -52,6 +53,8 @@ class PredictRequest(BaseModel):
                 raise ValueError(f"Each data point must contain {n_features} features")
 
         return v
+"""
+
 
 
 class PredictResponse(BaseModel):

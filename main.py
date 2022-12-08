@@ -8,6 +8,8 @@ import schemas,authentication, oauth2
 import models
 import tokenz
 from datetime import timedelta
+import shutil
+from ml import model
 
 import numpy as np
 import pandas as pd
@@ -48,16 +50,36 @@ def get_allUser(db: Session = Depends(get_db)):
 def login(db:Session=Depends(get_db), request:OAuth2PasswordRequestForm=Depends()):
 	return authentication.login(request=request, db=db)
 
-#Machine Learning
+@app.post('/upload_file')
 
-from .ml.model import get_model, n_features, Model
+async def upload_file(file: UploadFile = File(...)):
+    with open('sample.csv', "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
 
-def predict(input: schemas.PredictRequest, model: Model = Depends(get_model)):
-    X = np.array(input.data)
-    y_pred = model.predict(X)
-    result = schemas.PredictResponse(data=y_pred.tolist())
+    return {"file_name": file.filename}
+
+@app.post("/predict_csv")
+def predict_csv(csv_file: UploadFile = File(...)):
+    with open('sample.csv', "wb") as buffer:
+        shutil.copyfileobj(csv_file.file, buffer)
+    try:
+        df = pd.read_csv(csv_file.file).astype(float)
+    except:
+        raise HTTPException(
+            status_code=HTTP_422_UNPROCESSABLE_ENTITY, detail="Unable to process file"
+        )
+    df_n_instances, df_n_features = df.shape
+    if df_n_features != n_features:
+        raise HTTPException(
+            status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Each data point must contain {n_features} features",
+        )
+
+    model.predict()
+    result = "done"
 
     return result
+#Machine Learning
 
 
 

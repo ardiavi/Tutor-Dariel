@@ -11,8 +11,8 @@ class Model:
     def __init__(self, model_path: str = None):
         self._model = None
         self._model_path = model_path
-        self.train_data = pd.read_csv('database/train_u6lujuX_CVtuZ9i.csv')
-        self.test_data = pd.read_csv('sample.csv') #ganti sesuai dengan upload file gimana
+        self.train_data = pd.read_csv('../database/train_u6lujuX_CVtuZ9i.csv')
+        self.test_data = pd.read_csv('../sample.csv') #ganti sesuai dengan upload file gimana
         self.load()
     """
     def train(self):
@@ -214,7 +214,7 @@ class Model:
 model_path = Path(__file__).parent / "model.joblib"
 n_features = 13 #load_boston(return_X_y=True)[0].shape[1]
 model = Model(model_path)
-#print(model.predict())
+print(model.predict())
 def get_model():
     return model
 
