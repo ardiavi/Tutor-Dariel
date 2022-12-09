@@ -59,3 +59,16 @@ class PredictRequest(BaseModel):
 
 class PredictResponse(BaseModel):
     data: List[float]
+
+class LenderData(BaseModel):
+	Name : str
+	Dependents : int
+	Education : int
+	ApplicantIncome : int
+	CoapplicantIncome : float
+	LoanAmount : int
+	Credit_History : float
+	Property_Area : int
+	Male : int
+	Self_Employed_Yes : int
+	married_Yes : int

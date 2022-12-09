@@ -10,6 +10,7 @@ import tokenz
 from datetime import timedelta
 import shutil
 from ml import model
+import joblib
 
 import numpy as np
 import pandas as pd
@@ -63,22 +64,56 @@ def predict_csv(csv_file: UploadFile = File(...)):
     with open('sample.csv', "wb") as buffer:
         shutil.copyfileobj(csv_file.file, buffer)
     try:
-        df = pd.read_csv(csv_file.file).astype(float)
+        df = pd.read_csv('sample.csv')
     except:
         raise HTTPException(
-            status_code=HTTP_422_UNPROCESSABLE_ENTITY, detail="Unable to process file"
+            status_code=422, detail="Unable to process file"
         )
     df_n_instances, df_n_features = df.shape
-    if df_n_features != n_features:
+    if df_n_features != model.n_features:
         raise HTTPException(
-            status_code=HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=422,
             detail=f"Each data point must contain {n_features} features",
         )
 
-    model.predict()
+    model.model_obj.predict()
     result = "done"
 
     return result
+
+@app.post("/predict_loan")
+def predict(input: schemas.LenderData):
+    file = open("ml/training_nodel.joblib", "rb")
+    trained_model = joblib.load(file)
+    types = {
+        "Dependents" : np.int32,
+        "Education" : np.int32,
+        "ApplicationIncome" : np.int64,
+        "CoapplicantIncome" : np.float64,
+        "LoanAmount" : np.int32,
+        "Credit_History" : np.float64,
+        "Property_Area" : np.int32,
+        "Loan_Status": np.int32,
+        "Male" : np.uint8,
+        "Self_Employed_Yes" : np.uint8,
+        "married_Yes" : np.uint8,
+    }
+
+    input_arr = [input.Dependents,input.Education,input.ApplicantIncome,input.CoapplicantIncome,input.LoanAmount, input.Credit_History, input.Property_Area, input.Self_Employed_Yes, input.married_Yes]
+    df = pd.DataFrame(input_arr).transpose()
+    df.columns = list(types.keys())
+    df = df.astype(types)
+    df.to_numpy()
+    
+    amount = df["LoanAmount"]
+    results = (trained_model.predict(df))
+    if results == 1:
+        results = "Accepted"
+    else :
+        results = "Declined"
+    
+    return {"Loan Status:": results,
+                "Loan Amount" : amount}
 #Machine Learning
 
 

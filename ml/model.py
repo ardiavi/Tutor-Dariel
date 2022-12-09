@@ -13,6 +13,7 @@ class Model:
         self._model_path = model_path
         self.train_data = pd.read_csv('database/train_u6lujuX_CVtuZ9i.csv')
         self.test_data = pd.read_csv('sample.csv') #ganti sesuai dengan upload file gimana
+        
         self.load()
     """
     def train(self):
@@ -102,6 +103,8 @@ class Model:
     
 
     def predict(self):
+        self.train_data = pd.read_csv('database/train_u6lujuX_CVtuZ9i.csv')
+        self.test_data = pd.read_csv('sample.csv') #ganti sesuai dengan upload file gimana
         #Upload and Open File Sample
         #Open FIle Sample yang udah ada
                 #bersih data
@@ -183,7 +186,10 @@ class Model:
         X_train ,X_test , y_train , y_test = train_test_split(X , y , test_size = 0.3 , random_state =102)
         logmodel = LogisticRegression()
         logmodel.fit(X_train , y_train)
+        joblib.dump(logmodel, "train_model.joblib")
         logmodel.predict(X_test)
+
+        
 
         df_test = self.test_data.drop(['Loan_ID'], axis = 1)
 
@@ -212,8 +218,8 @@ class Model:
 
 
 model_path = Path(__file__).parent / "model.joblib"
-n_features = 13 #load_boston(return_X_y=True)[0].shape[1]
-model = Model(model_path)
+model_obj = Model(model_path)
+n_features = 12
 #print(model.predict())
 def get_model():
     return model
