@@ -23,7 +23,7 @@ async def authenticate_user(username: str, password: str):
     return user 
 
 def login(request:schemas.Login, db:Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.username == request.username).first()
+    user = db.query(models.User_Real).filter(models.User_Real.username == request.username).first()
     if not user :
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Invalid Credentials")
     if not Hash.verify(user.password, request.password):

@@ -1,4 +1,5 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+from auth import authentication, oauth2
 from SchemaModels import schemas
 import joblib
 import numpy as np
@@ -6,7 +7,7 @@ import pandas as pd
 
 router = APIRouter(tags=["Machine Learning Model"])
 @router.post("/predict_loan")
-def predict(input: schemas.LenderData):
+def predict(input: schemas.LenderData, current_user: schemas.BaseUserData = Depends(oauth2.get_current_user)):
     file = open("ml/train_model.joblib", "rb")
     trained_model = joblib.load(file)
     types = {

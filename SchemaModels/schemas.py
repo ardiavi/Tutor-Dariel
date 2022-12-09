@@ -2,13 +2,14 @@ import datetime
 from typing import Optional, List
 from pydantic import BaseModel
 
-#kayak ngatur bagaimana cara user melihat anuan kita
+
 
 class BaseUserData(BaseModel):
 	username:str
 	password:str
 	email:str
-	secretCombination:int
+	securityquestion:str
+	securityanswer:str
 
 # Used to get all attibutes from user
 class GetUser(BaseUserData):
@@ -20,8 +21,10 @@ class GetUser(BaseUserData):
 
 # Used to show user without password
 class ShowUser(BaseModel):
+	id:int
 	username:str
 	email:str
+	securityquestion:str
 
 	class Config:
 		orm_mode = True
@@ -40,25 +43,6 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: Optional[str] = None
 
-#Schemas For Machine Learning
-"""
-from .ml.model import n_features
-class PredictRequest(BaseModel):
-    data: List[List[float]]
-
-    @validator("data")
-    def check_dimensionality(cls, v):
-        for point in v:
-            if len(point) != n_features:
-                raise ValueError(f"Each data point must contain {n_features} features")
-
-        return v
-"""
-
-
-
-class PredictResponse(BaseModel):
-    data: List[float]
 
 class LenderData(BaseModel):
 	Name : str

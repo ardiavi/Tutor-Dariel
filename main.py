@@ -5,7 +5,6 @@ from typing import List
 from config.database import engine, SessionLocal
 from datetime import timedelta
 import shutil
-from ml import model
 import joblib
 
 import numpy as np
