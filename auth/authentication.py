@@ -1,9 +1,10 @@
-from database import SessionLocal
+from config.database import SessionLocal
 from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import datetime, timedelta
-import schemas, database, models, tokenz
-from hashing import Hash
+from SchemaModels import schemas, models
+from auth import tokenz
+from auth.hashing import Hash
 from sqlalchemy.orm import Session
 
 def get_db():

@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-import schemas
+from SchemaModels import schemas
 from jose import JWTError, jwt
 from typing import Union
 

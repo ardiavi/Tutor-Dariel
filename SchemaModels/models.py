@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, String
 # terus masukin si base sebagaai parent inget inheritance oop
 # si usert child, base itu parent
 
-from database import Base
+from config.database import Base
 
 #intinya ini buat tabell babes
 

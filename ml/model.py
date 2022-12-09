@@ -12,7 +12,6 @@ class Model:
         self._model = None
         self._model_path = model_path
         self.train_data = pd.read_csv('database/train_u6lujuX_CVtuZ9i.csv')
-        self.test_data = pd.read_csv('sample.csv') #ganti sesuai dengan upload file gimana
         
         self.load()
     """
