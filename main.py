@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, status, HTTPException,File, UploadFile
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import List
-from config.database import engine, SessionLocal
+from .config.database import engine, SessionLocal
 from datetime import timedelta
 import shutil
 import joblib
@@ -10,7 +10,8 @@ import joblib
 import numpy as np
 import pandas as pd
 import uvicorn
-from routers import ML_predict, user
+from .routers.ML_predict import *
+from .routers.user import *
 from SchemaModels import models
 #
 
@@ -19,8 +20,8 @@ models.Base.metadata.create_all(bind=engine) #to create database
 
 app = FastAPI()
 
-app.include_router(ML_predict.router)
-app.include_router(user.router)
+app.include_router(router_ml)
+app.include_router(router_user)
 
 
 

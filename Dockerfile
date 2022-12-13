@@ -1,10 +1,22 @@
 
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
-WORKDIR /app
+FROM python:3.9-slim
 
-COPY . /app
-COPY ./requirements.txt ./requirements.txt
+COPY ./auth /app/auth
+COPY ./config /app/config
+COPY ./database /app/database
+COPY ./ml /app/ml
 
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+COPY ./requirements.txt /app
+COPY ./.env /app
+COPY ./test.db /app
+COPY ./routers /app/routers
+COPY ./SchemaModels /app/SchemaModels
+COPY ./main.py /app
+WORKDIR /app 
 
-CMD ["uvicorn","main:app","--host","0.0.0.0","--port", "8000"]
+RUN pip3 install -r requirements.txt
+
+EXPOSE 8000
+
+CMD ["uvicorn", "src.main:app", "--host=0.0.0.0", "--reload"]
+

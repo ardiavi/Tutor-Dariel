@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String
 
 #import base dari database.py
 
-from config.database import Base
+from .config.database import Base
 
 #intinya ini buat tabell babes
 
